@@ -1,11 +1,11 @@
-module DataCache(clk, inPipeAddress, outMemAddress, inPipeData, inMemData, outPipeData, outMemData, readPipe, writePipe, readMem, writeMem, dataGrabbed, memDataReady);
+module DataCache(clk, rst, inPipeAddress, outMemAddress, inPipeData, inMemData, outPipeData, outMemData, readPipe, writePipe, readMem, writeMem, dataGrabbed, memDataReady);
     // data cache interacts with both the pipeline 'DataMemory'
     //  and the 'MainMemory'
     // to avoid confusion pipeline connections are noted as 'pipe'
     //  and main memory connections are noted as 'mem'
     // additionally some lines are inputs and outputs of the cache
     //  these are noted with the in and out prefix
-    input clk;
+    input clk, rst;
     input reg [31:0] inPipeAddress;
     output reg [31:0] outMemAddress;
     input reg [31:0] inPipeData, inMemData;
@@ -14,6 +14,7 @@ module DataCache(clk, inPipeAddress, outMemAddress, inPipeData, inMemData, outPi
     output reg readMem, writeMem dataGrabbed;
     input reg memDataReady;
     reg miss;
+    integer i;
 
     // the cache is 256 entries which requires an
     //  8-bit index for a direct mapped cache
@@ -33,14 +34,23 @@ module DataCache(clk, inPipeAddress, outMemAddress, inPipeData, inMemData, outPi
     assign tag = inPipeAddress[31:8];
 
     always@(posedge clk) begin
-        outMemAddress <= 32'b0;
-        outPipeData <= 32'b0;
-        outMemData <= 32'b0;
-        readMem <= 1'b0;
-        writeMem <= 1'b0;
-        dataGrabbed <= 1'b0;
-
-        if(writePipe) begin
+        if(rst) begin
+            for(i=0;i<depth;i=i+1) begin 
+                data[i]<=0;
+                // because the memory space is limited these
+                //  memory tags are beyond the memory space at
+                //  initialization so that the cache is starting
+                //  with a blank state
+                dataTags<=24'hFF_FF_FF;   
+            end
+            outMemAddress <= 32'b0;
+            outPipeData <= 32'b0;
+            outMemData <= 32'b0;
+            readMem <= 1'b0;
+            writeMem <= 1'b0;
+            dataGrabbed <= 1'b0;
+        end
+        else if(writePipe) begin
             // because we have a write-through policy
             //  we can just write over any data in the
             //  cache without any extra steps
@@ -49,6 +59,10 @@ module DataCache(clk, inPipeAddress, outMemAddress, inPipeData, inMemData, outPi
             writeMem <= 1'b1;
             outMemAddress <= inPipeAddress;
             outMemData <= inPipeData;
+
+            outPipeData <= 32'b0;
+            readMem <= 1'b0;
+            dataGrabbed <= 1'b0;
         end
     end
 
@@ -58,12 +72,23 @@ module DataCache(clk, inPipeAddress, outMemAddress, inPipeData, inMemData, outPi
             if(dataTags[index] == tag) begin
                 // cache hit!
                 outPipeData <= data[index];
+                            
+                outMemAddress <= 32'b0;
+                outMemData <= 32'b0;
+                readMem <= 1'b0;
+                writeMem <= 1'b0;
+                dataGrabbed <= 1'b0;
             end
             else begin
                 // cache miss
                 outMemAddress <= inPipeAddress;
                 readMem <= 1'b1;
                 miss <= 1'b1;
+
+                outPipeData <= 32'b0;
+                outMemData <= 32'b0;
+                writeMem <= 1'b0;
+                dataGrabbed <= 1'b0;
             end
         end
     end

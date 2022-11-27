@@ -1,8 +1,9 @@
-module MainMemory(address, writeData, memWrite, memRead, readData);
+module MainMemory(rst, address, writeData, memWrite, memRead, readData);
     input readMem, writeMem dataGrabbed;
     input reg[31:0] address, inData;
     output reg[31:0] outData;
     output memDataReady;
+    integer i;
 	
     // due to limitations we are only going to have a 
     // 10-bit address space
@@ -11,7 +12,10 @@ module MainMemory(address, writeData, memWrite, memRead, readData);
     reg [9:0] index;
     assign index = address[9:0];
 
-	// Writing on positive edge
+    always @(posedge rst) begin
+        for(i=0;i<depth;i=i+1) begin data[i]<=0; end
+    end
+
 	always @(posedge writeMem) begin
         data[index] <= inData;
     end
@@ -24,5 +28,4 @@ module MainMemory(address, writeData, memWrite, memRead, readData);
     always @(posedge dataGrabbed) begin
         memDataReady <= 1'b0;
     end
-
 endmodule
