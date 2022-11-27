@@ -4,3 +4,7 @@
 *.hdb
 *.kpt
 *.qmsg
+db/mips-processor.db_info
+db/mips-processor.sld_design_entry.sci
+mips-processor.qsf
+mips-processor.qws

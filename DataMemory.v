@@ -1,22 +1,34 @@
-module DataMemory(clk, address, writeData, memWrite, memRead, readData);
-	input						clk;
+module DataMemory(clk, rst, address, writeData, memWrite, memRead, readData);
+	input						clk, rst;
 	input 		[31:0] 	address, writeData;
 	input 					memWrite, memRead;
 	output reg	[31:0]	readData;
 	
-	parameter depth = 1024;
-	reg [31:0] data [0:depth-1];
-
-	// Writing on positive edge
+	parameter DEPTH = 1024;
+	reg [31:0] data [0:DEPTH-1];
+	
+	integer i;
+	
+	// Writing on positive edge and SYNC reset
 	always @(posedge clk) begin
-		if(memWrite) data[address] <= writeData;
-		else data[address] <= data[address];
+		if(!rst) begin
+			if(memWrite) data[address] <= writeData;
+			else data[address] <= data[address];
+		end
+		else begin
+			for (i=0; i<DEPTH; i=i+1) data[i] <= 0;
+		end
 	end
 
-	// Reading on negative edge
+	// Reading on negative edge and SYNC reset
 	always @(negedge clk) begin
-		if(memRead) readData <= data[address];
-		else readData <= readData;
+		if(!rst) begin
+			if(memRead) readData <= data[address];
+			else readData <= readData;
+		end
+		else begin
+			readData <= 0;
+		end
 	end
 
 endmodule
