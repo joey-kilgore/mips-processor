@@ -1,22 +1,13 @@
 module DataMemory(clk, address, writeData, memWrite, memRead, readData);
-	input						clk;
-	input 		[31:0] 	address, writeData;
-	input 					memWrite, memRead;
-	output reg	[31:0]	readData;
-	
-	parameter depth = 1024;
-	reg [31:0] data [0:depth-1];
+	input clk;
+	input [31:0] address, writeData;
+	input memWrite, memRead;
+	output reg [31:0] readData;
 
-	// Writing on positive edge
-	always @(posedge clk) begin
-		if(memWrite) data[address] <= writeData;
-		else data[address] <= data[address];
-	end
+	reg outMemAddress;
+	reg [31:0] memToCacheData, cacheToMemData;
+	reg readMem, writeMem, dataGrabbed, memDataReady;
 
-	// Reading on negative edge
-	always @(negedge clk) begin
-		if(memRead) readData <= data[address];
-		else readData <= readData;
-	end
-
+	DataCache dataCache(clk, address, outMemAddress, writeData, memToCacheData, memRead, cacheToMemData, memRead, memWrite, readMem, writeMem, dataGrabbed, memDataReady);
+	MainMemory MainMemory(outMemAddress, cacheToMemData, writeMem, readMem, memToCacheData);
 endmodule
