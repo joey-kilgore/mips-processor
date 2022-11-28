@@ -19,6 +19,28 @@ module ControlUnit(opCode, regDst, jump, branch, memRead, memToReg, aluOp, memWr
 				aluSrc	<= 1'b0;
 				regWrite	<= 1'b1;
 				end
+			35: begin // LW Inst	
+				regDst	<= 1'b0;
+				jump		<= 1'b0;
+				branch	<= 1'b0;
+				memRead	<= 1'b1;
+				memToReg	<= 1'b1;
+				aluOp		<= 2'b00;
+				memWrite	<= 1'b0; 
+				aluSrc	<= 1'b1;
+				regWrite	<= 1'b1;
+				end
+			43: begin // SW Inst	
+				regDst	<= 1'b0;
+				jump		<= 1'b0;
+				branch	<= 1'b0;
+				memRead	<= 1'b0;
+				memToReg	<= 1'b0;
+				aluOp		<= 2'b00;
+				memWrite	<= 1'b1; 
+				aluSrc	<= 1'b1;
+				regWrite	<= 1'b0;
+				end				
 				//I-Format supported instructions 						
 //			4:  ControlLines<=12'b000_0001_00100; //BEQ
 //			5:  ControlLines<=12'b000_0001_00100; //BNE
