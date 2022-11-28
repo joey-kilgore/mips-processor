@@ -2,10 +2,14 @@ module Cache_TB;
 	reg clk, rst;
 	reg [31:0] address, writeData;
 	reg memWrite, memRead;
-	reg [31:0] readData;
+	wire [31:0] readData;
 	
 	DataMemory dataMemory(clk, rst, address, writeData, memWrite, memRead, readData);
 
+    wire[31:0] addr0, addr1, cache0;
+    assign addr0 = dataMemory.mainMemory.data[32'h0000_0000];
+    assign addr1 = dataMemory.mainMemory.data[32'h0000_0100];
+    assign cache0 = dataMemory.dataCache.data[0];
 
 	initial begin
         clk <= 1'b0;
@@ -13,6 +17,7 @@ module Cache_TB;
         writeData <= 32'b0;
         memWrite <= 1'b0;
         memRead <= 1'b0;
+        rst <= 1'b0;
 
         #5
         rst <= 1'b1;
@@ -25,19 +30,27 @@ module Cache_TB;
 
         #4
         memWrite <= 1'b0;
+        memRead <= 1'b1;
         
         #4
         memRead <= 1'b0;
 
         #4
-        rst <= 1'b0;
         address <= 32'h0000_0100;
         writeData <= 32'h0000_0001;
         memWrite <= 1'b1;
 
         #4
         memWrite <= 1'b0;
-        
+        memRead <= 1'b1;
+
+        #4
+        memRead <= 1'b0;
+
+        #4
+        address <= 32'h0000_0000;
+        memRead <= 1'b1;
+
         #4
         memRead <= 1'b0;
 
@@ -49,7 +62,7 @@ module Cache_TB;
     initial
     begin
     $shm_open("mywave.db");
-    $shm_probe(MIPS_TB,"AS");
+    $shm_probe(Cache_TB,"AS");
     $shm_save;
     end
 endmodule
