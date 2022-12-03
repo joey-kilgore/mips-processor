@@ -1,10 +1,12 @@
+`timescale 1ns/1ns
 module Cache_TB;
 	reg clk, rst;
 	reg [31:0] address, writeData;
 	reg memWrite, memRead;
 	wire [31:0] readData;
+	wire dataReady;
 	
-	DataMemory dataMemory(clk, rst, address, writeData, memWrite, memRead, readData);
+	DataMemory dataMemory(clk, rst, address, writeData, memWrite, memRead, readData, dataReady);
 
     wire[31:0] addr0, addr1, cache0;
     assign addr0 = dataMemory.mainMemory.data[32'h0000_0000];
@@ -54,15 +56,16 @@ module Cache_TB;
         #4
         memRead <= 1'b0;
 
-		#12 $finish;
+		#12 $stop;
+		$finish;
 	end
 	
 	always #2 clk = ~clk;
 
-    initial
-    begin
-    $shm_open("mywave.db");
-    $shm_probe(Cache_TB,"AS");
-    $shm_save;
-    end
+//    initial
+//    begin
+//    $shm_open("mywave.db");
+//    $shm_probe(Cache_TB,"AS");
+//    $shm_save;
+//    end
 endmodule
