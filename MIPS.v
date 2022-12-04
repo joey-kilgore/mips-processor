@@ -25,6 +25,7 @@ module MIPS(clk, rst);
 	wire [31:0] readData;
 	wire [1:0] aluOp;
 	wire [3:0] aluControl;
+	wire dataReady;
 
 
 
@@ -79,7 +80,7 @@ module MIPS(clk, rst);
 	ControlUnit		mipsControlUnit(opCode, regDst, jump, branch, memRead, memToReg, aluOp, memWrite, aluSrc, regWrite);
 	SignExtend 		mipsSignExtend(immed, immed_32);
 	ALU 				mipsALU(ID_EX_readData1, input2, aluControl, ID_EX_shamt, aluResult, zero);
-	DataMemory 		mipsDataMemory(clk, rst, EX_MEM_aluResult, EX_MEM_readData2, EX_MEM_memWrite, EX_MEM_memRead, readData);
+	DataMemory 		mipsDataMemory(clk, rst, EX_MEM_aluResult, EX_MEM_readData2, EX_MEM_memWrite, EX_MEM_memRead, readData, dataReady);
 	ALUControlUnit mipsALUControlUnit(ID_EX_funct, ID_EX_aluOp, aluControl);
 	Mux #(.WIDTH(5)) writeRegMux(ID_EX_rt, ID_EX_rd, ID_EX_regDst, writeReg);
 	Mux 				aluMux(ID_EX_readData2, ID_EX_immed_32, ID_EX_aluSrc, input2);
@@ -89,57 +90,19 @@ module MIPS(clk, rst);
 	
 	// Fetch inst on negative edge
 	always @(negedge clk) begin
-		if(!rst) inst <= instMem[PC];
-		else		inst <= inst;
+		if(rst) 	inst <= inst;
+		else if(dataReady == 1'b1) inst <= inst;
+		else		inst <= instMem[PC];
 	end
 	always @(posedge clk) begin
-		if(!rst) PC <= PC + 1;
-		else		PC <= 0;
+		if(rst) 	PC <= 0;
+		else if(dataReady == 1'b1) PC <= PC;
+		else		PC <= PC + 1;
 	end
 	
 	// Update pipeline registers
 	always @(posedge clk) begin
-		if(!rst) begin 
-			IF_ID_PC 			<= PC;
-			IF_ID_inst 			<= inst;
-	
-			ID_EX_regDst 		<= regDst; 	
-			ID_EX_jump			<= jump;		
-			ID_EX_branch		<= branch;	
-			ID_EX_memRead		<= memRead;	
-			ID_EX_memToReg		<= memToReg;	
-			ID_EX_memWrite		<= memWrite;	
-			ID_EX_aluSrc		<= aluSrc;	
-			ID_EX_regWrite		<= regWrite;	
-			ID_EX_aluOp			<= aluOp;		
-			ID_EX_PC				<= IF_ID_PC;
-			ID_EX_readData1	<= readData1;
-			ID_EX_readData2	<= readData2;
-			ID_EX_rs				<= IF_ID_rs;
-			ID_EX_rt 			<= IF_ID_rt;
-			ID_EX_rd				<= IF_ID_rd;
-			ID_EX_shamt			<= IF_ID_shamt;	
-			ID_EX_funct			<= IF_ID_funct;
-			ID_EX_immed_32		<= immed_32;
-
-			EX_MEM_branch		<= ID_EX_branch;	
-			EX_MEM_memRead 	<= ID_EX_memRead;	
-			EX_MEM_memToReg	<= ID_EX_memToReg;
-			EX_MEM_memWrite	<= ID_EX_memWrite;
-			EX_MEM_regWrite	<= ID_EX_regWrite;
-			EX_MEM_writeReg	<= writeReg;
-			EX_MEM_aluResult	<= aluResult;
-			EX_MEM_zero			<= zero;
-			EX_MEM_readData2	<= ID_EX_readData2;
-			EX_MEM_branchAdd	<= ID_EX_PC + ID_EX_immed_32;
-
-			MEM_WB_memToReg	<= EX_MEM_memToReg;
-			MEM_WB_regWrite	<= EX_MEM_regWrite;
-			MEM_WB_writeReg	<= EX_MEM_writeReg;
-			MEM_WB_aluResult	<= EX_MEM_aluResult;
-			MEM_WB_readData	<= readData;	
-		end
-		else begin
+		if(rst) begin 
 			IF_ID_PC 			<= 0;
 			IF_ID_inst 			<= 0;
 
@@ -178,6 +141,87 @@ module MIPS(clk, rst);
 			MEM_WB_writeReg	<= 0;
 			MEM_WB_aluResult	<= 0;
 			MEM_WB_readData	<= 0;
+		end
+		else if(dataReady == 1'b1) begin
+			IF_ID_PC 			<= IF_ID_PC;
+			IF_ID_inst 			<= IF_ID_inst;
+
+			ID_EX_regDst 		<= ID_EX_regDst;
+			ID_EX_jump			<= ID_EX_jump;
+			ID_EX_branch		<= ID_EX_branch;
+			ID_EX_memRead		<= ID_EX_memRead;
+			ID_EX_memToReg		<= ID_EX_memToReg;
+			ID_EX_memWrite		<= ID_EX_memWrite;
+			ID_EX_aluSrc		<= ID_EX_aluSrc;
+			ID_EX_regWrite		<= ID_EX_regWrite;
+			ID_EX_aluOp			<= ID_EX_aluOp;
+			ID_EX_PC				<= ID_EX_PC;
+			ID_EX_readData1	<= ID_EX_readData1;
+			ID_EX_readData2	<= ID_EX_readData2;
+			ID_EX_rs				<= ID_EX_rs;
+			ID_EX_rt 			<= ID_EX_rt;
+			ID_EX_rd				<= ID_EX_rd;
+			ID_EX_shamt			<= ID_EX_shamt;
+			ID_EX_funct			<= ID_EX_funct;
+			ID_EX_immed_32		<= ID_EX_immed_32;
+                             
+			EX_MEM_branch		<= EX_MEM_branch;
+			EX_MEM_memRead 	<= EX_MEM_memRead;
+			EX_MEM_memToReg	<= EX_MEM_memToReg;
+			EX_MEM_memWrite	<= EX_MEM_memWrite;
+			EX_MEM_regWrite	<= EX_MEM_regWrite;
+			EX_MEM_writeReg	<= EX_MEM_writeReg;
+			EX_MEM_aluResult	<= EX_MEM_aluResult;
+			EX_MEM_zero			<= EX_MEM_zero;
+			EX_MEM_readData2	<= EX_MEM_readData2;
+			EX_MEM_branchAdd	<= EX_MEM_branchAdd;
+                             
+			MEM_WB_memToReg	<= MEM_WB_memToReg;
+			MEM_WB_regWrite	<= MEM_WB_regWrite;
+			MEM_WB_writeReg	<= MEM_WB_writeReg;
+			MEM_WB_aluResult	<= MEM_WB_aluResult;
+			MEM_WB_readData	<= MEM_WB_readData;
+		end
+		else begin
+			IF_ID_PC 			<= PC;
+			IF_ID_inst 			<= inst;
+	
+			ID_EX_regDst 		<= regDst; 	
+			ID_EX_jump			<= jump;		
+			ID_EX_branch		<= branch;	
+			ID_EX_memRead		<= memRead;	
+			ID_EX_memToReg		<= memToReg;	
+			ID_EX_memWrite		<= memWrite;	
+			ID_EX_aluSrc		<= aluSrc;	
+			ID_EX_regWrite		<= regWrite;	
+			ID_EX_aluOp			<= aluOp;		
+			ID_EX_PC				<= IF_ID_PC;
+			ID_EX_readData1	<= readData1;
+			ID_EX_readData2	<= readData2;
+			ID_EX_rs				<= IF_ID_rs;
+			ID_EX_rt 			<= IF_ID_rt;
+			ID_EX_rd				<= IF_ID_rd;
+			ID_EX_shamt			<= IF_ID_shamt;	
+			ID_EX_funct			<= IF_ID_funct;
+			ID_EX_immed_32		<= immed_32;
+
+			EX_MEM_branch		<= ID_EX_branch;	
+			EX_MEM_memRead 	<= ID_EX_memRead;	
+			EX_MEM_memToReg	<= ID_EX_memToReg;
+			EX_MEM_memWrite	<= ID_EX_memWrite;
+			EX_MEM_regWrite	<= ID_EX_regWrite;
+			EX_MEM_writeReg	<= writeReg;
+			EX_MEM_aluResult	<= aluResult;
+			EX_MEM_zero			<= zero;
+			EX_MEM_readData2	<= ID_EX_readData2;
+			EX_MEM_branchAdd	<= ID_EX_PC + ID_EX_immed_32;
+
+			MEM_WB_memToReg	<= EX_MEM_memToReg;
+			MEM_WB_regWrite	<= EX_MEM_regWrite;
+			MEM_WB_writeReg	<= EX_MEM_writeReg;
+			MEM_WB_aluResult	<= EX_MEM_aluResult;
+			MEM_WB_readData	<= readData;	
+			
 		end
 	end
 	

@@ -10,7 +10,7 @@ module MainMemory(clk, rst, address, inData, memWrite, memRead, outData, dataGra
 	parameter depth = 1024;
 	reg [31:0] data [0:depth-1];
 
-	always @(negedge clk) begin
+	always @(posedge clk) begin
 		if(rst) begin
 			for(i=0;i<depth;i=i+1) begin data[i]<=0; end
 			memDataReady <= 1'b0;

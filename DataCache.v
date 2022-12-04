@@ -33,7 +33,7 @@ module DataCache(clk, rst, inPipeAddress, outMemAddress, inPipeData, inMemData, 
     assign index = inPipeAddress[7:0];
     assign tag = inPipeAddress[31:8];
 
-    always@(posedge clk) begin
+    always@(negedge clk) begin
         if(rst) begin
             for(i=0;i<depth;i=i+1) begin 
                 data[i]<=32'hFFFF_FFFF;
