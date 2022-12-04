@@ -1,11 +1,14 @@
-module MIPS(clk, rst);
-
+module MIPS(clk, rst, testReg, outPC);
 	input clk, rst;
+	output [31:0] testReg;
+	output [31:0] outPC;
+	
 	parameter DATA_DEPTH = 1024;
-	parameter INST_DEPTH = 1024;
+	parameter INST_DEPTH = 128;
 
 	reg [31:0] instMem [0:INST_DEPTH-1];
 	reg [31:0] PC;
+	assign outPC = PC;
 	
 	reg [31:0]  inst;
 	wire [5:0]	opCode;
@@ -76,7 +79,7 @@ module MIPS(clk, rst);
 	//reg MEMWBoverflow;
 	//reg [11:0]MEMWBControlLines;
 	
-	RegFile			mipsRegFile(clk, rst, MEM_WB_regWrite, IF_ID_rs, IF_ID_rt, MEM_WB_writeReg, readData1, readData2, writeData);
+	RegFile			mipsRegFile(clk, rst, MEM_WB_regWrite, IF_ID_rs, IF_ID_rt, MEM_WB_writeReg, readData1, readData2, writeData, testReg);
 	ControlUnit		mipsControlUnit(opCode, regDst, jump, branch, memRead, memToReg, aluOp, memWrite, aluSrc, regWrite);
 	SignExtend 		mipsSignExtend(immed, immed_32);
 	ALU 				mipsALU(ID_EX_readData1, input2, aluControl, ID_EX_shamt, aluResult, zero);
@@ -141,6 +144,20 @@ module MIPS(clk, rst);
 			MEM_WB_writeReg	<= 0;
 			MEM_WB_aluResult	<= 0;
 			MEM_WB_readData	<= 0;
+			
+			// setup instructions (only use on board)
+			instMem[0] <= 32'h02309020; //add $s2 $s1 $s0
+			instMem[1] <= 32'h02309022; //sub $s2 $s1 $s0
+			instMem[2] <= 32'h02309024; //and $s2 $s1 $s0
+			instMem[3] <= 32'h02309025; //or  $s2 $s1 $s0
+			instMem[4] <= 32'hAE720004; //sw $s2 0x4 $s3
+			instMem[5] <= 32'h8E740004; //lw $s4 0x4 $s3
+			instMem[6] <= 32'hAE720104; //sw $s2 0x(100+4) $s3
+			instMem[7] <= 32'h8E740004; //lw $s4 0x4 $s3
+			instMem[8] <= 32'h02309020; //add $s2 $s1 $s0
+			instMem[9] <= 32'h02309022; //sub $s2 $s1 $s0
+			instMem[10] <= 32'h02309024; //and $s2 $s1 $s0
+         instMem[11] <= 32'h02309025; //or  $s2 $s1 $s0
 		end
 		else if(dataReady == 1'b1) begin
 			IF_ID_PC 			<= IF_ID_PC;

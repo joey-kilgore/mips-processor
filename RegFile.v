@@ -1,4 +1,4 @@
-module RegFile(clk, rst, writeEnb, readReg1, readReg2, writeReg, readData1, readData2, writeData);
+module RegFile(clk, rst, writeEnb, readReg1, readReg2, writeReg, readData1, readData2, writeData, testReg);
 
 	input [4:0] 	readReg1; 	//Address of first regfile operand
 	input [4:0] 	readReg2; 	//Address of second regfile operand
@@ -10,6 +10,8 @@ module RegFile(clk, rst, writeEnb, readReg1, readReg2, writeReg, readData1, read
 	output  [31:0] readData1; //First output of regfile
 	output  [31:0]	readData2; //Second output of regfile
 	reg [31:0] registers [0:31]; //Regfile definition 32 registers with width one WORD
+	output [31:0] testReg; //Register for output
+	assign testReg = registers[18];
 	
 	integer i;
 	
@@ -28,6 +30,9 @@ module RegFile(clk, rst, writeEnb, readReg1, readReg2, writeReg, readData1, read
 		end
 		else begin
 			for (i=0; i<32; i=i+1) registers[i] <= 0;
+			registers[16] <= 32'h000004D2; //s0 = 1234
+			registers[17] <= 32'h0000162E; //s1 = 5678
+			registers[19] <= 32'h00000000; //s3 = 0
 		end 
 	end
 

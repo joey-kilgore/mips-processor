@@ -1,0 +1,89 @@
+# Copyright (C) 2022  Intel Corporation. All rights reserved.
+# Your use of Intel Corporation's design tools, logic functions 
+# and other software and tools, and any partner logic 
+# functions, and any output files from any of the foregoing 
+# (including device programming or simulation files), and any 
+# associated documentation or information are expressly subject 
+# to the terms and conditions of the Intel Program License 
+# Subscription Agreement, the Intel Quartus Prime License Agreement,
+# the Intel FPGA IP License Agreement, or other applicable license
+# agreement, including, without limitation, that your use is for
+# the sole purpose of programming logic devices manufactured by
+# Intel and sold by Intel or its authorized distributors.  Please
+# refer to the applicable agreement for further details, at
+# https://fpgasoftware.intel.com/eula.
+
+# Quartus Prime Version 22.1std.0 Build 915 10/25/2022 SC Lite Edition
+# File: L:\Github Repos\mips-processor\output_files\mips-processor.csv
+# Generated on: Sun Dec  4 15:00:15 2022
+
+# Note: The column header names should not be changed if you wish to import this .csv file into the Quartus Prime software.
+
+To,Direction,Location,I/O Bank,VREF Group,I/O Standard,Reserved,Current Strength,Slew Rate,Differential Pair,Strict Preservation
+PC[31],Output,,,,,,,,,
+PC[30],Output,,,,,,,,,
+PC[29],Output,,,,,,,,,
+PC[28],Output,,,,,,,,,
+PC[27],Output,,,,,,,,,
+PC[26],Output,,,,,,,,,
+PC[25],Output,,,,,,,,,
+PC[24],Output,,,,,,,,,
+PC[23],Output,,,,,,,,,
+PC[22],Output,,,,,,,,,
+PC[21],Output,,,,,,,,,
+PC[20],Output,,,,,,,,,
+PC[19],Output,,,,,,,,,
+PC[18],Output,,,,,,,,,
+PC[17],Output,,,,,,,,,
+PC[16],Output,,,,,,,,,
+PC[15],Output,,,,,,,,,
+PC[14],Output,,,,,,,,,
+PC[13],Output,,,,,,,,,
+PC[12],Output,,,,,,,,,
+PC[11],Output,,,,,,,,,
+PC[10],Output,,,,,,,,,
+PC[9],Output,,,,,,,,,
+PC[8],Output,,,,,,,,,
+PC[7],Output,PIN_G21,7,B7_N1,,,,,,
+PC[6],Output,PIN_G22,7,B7_N2,,,,,,
+PC[5],Output,PIN_G20,7,B7_N1,,,,,,
+PC[4],Output,PIN_H21,7,B7_N2,,,,,,
+PC[3],Output,PIN_E24,7,B7_N1,,,,,,
+PC[2],Output,PIN_E25,7,B7_N1,,,,,,
+PC[1],Output,PIN_E22,7,B7_N0,,,,,,
+PC[0],Output,PIN_E21,7,B7_N0,,,,,,
+clk,Output,PIN_F17,7,B7_N2,,,,,,
+clkin,Input,PIN_Y2,2,B2_N0,2.5 V,,,,,
+rst,Input,PIN_AB28,5,B5_N1,2.5 V,,,,,
+testReg[31],Output,,,,,,,,,
+testReg[30],Output,,,,,,,,,
+testReg[29],Output,,,,,,,,,
+testReg[28],Output,,,,,,,,,
+testReg[27],Output,,,,,,,,,
+testReg[26],Output,,,,,,,,,
+testReg[25],Output,,,,,,,,,
+testReg[24],Output,,,,,,,,,
+testReg[23],Output,,,,,,,,,
+testReg[22],Output,,,,,,,,,
+testReg[21],Output,,,,,,,,,
+testReg[20],Output,,,,,,,,,
+testReg[19],Output,,,,,,,,,
+testReg[18],Output,,,,,,,,,
+testReg[17],Output,,,,,,,,,
+testReg[16],Output,,,,,,,,,
+testReg[15],Output,PIN_G15,7,B7_N2,,,,,,
+testReg[14],Output,PIN_F15,7,B7_N2,,,,,,
+testReg[13],Output,PIN_H17,7,B7_N2,,,,,,
+testReg[12],Output,PIN_J16,7,B7_N2,,,,,,
+testReg[11],Output,PIN_H16,7,B7_N2,,,,,,
+testReg[10],Output,PIN_J15,7,B7_N2,,,,,,
+testReg[9],Output,PIN_G17,7,B7_N1,,,,,,
+testReg[8],Output,PIN_J17,7,B7_N2,2.5 V,,,,,
+testReg[7],Output,PIN_H19,7,B7_N2,2.5 V,,,,,
+testReg[6],Output,PIN_J19,7,B7_N2,2.5 V,,,,,
+testReg[5],Output,PIN_E18,7,B7_N1,2.5 V,,,,,
+testReg[4],Output,PIN_F18,7,B7_N1,2.5 V,,,,,
+testReg[3],Output,PIN_F21,7,B7_N0,2.5 V,,,,,
+testReg[2],Output,PIN_E19,7,B7_N0,2.5 V,,,,,
+testReg[1],Output,PIN_F19,7,B7_N0,2.5 V,,,,,
+testReg[0],Output,PIN_G19,7,B7_N2,2.5 V,,,,,

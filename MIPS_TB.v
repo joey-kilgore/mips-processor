@@ -2,8 +2,9 @@
 
 module MIPS_TB;
 	reg clk, rst;
+	wire [31:0] testReg, outPC;
 	
-	MIPS testMips(clk, rst);
+	MIPS testMips(clk, rst, testReg, outPC);
 
 	initial begin
         clk <= 1'b0;
